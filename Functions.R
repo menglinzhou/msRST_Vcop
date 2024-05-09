@@ -164,7 +164,9 @@ con_den_gt <- function(xvec, RVM_X, RVM_all, p=NULL, Up=NULL,
     M[which(RVM_all[["Matrix"]][d:1,d:1] == perm[j])] = j
   }
   uvec = matrix(uvec, ncol = d)
-  con_prob = RVinePCond(udat = matrix(uvec[,perm], ncol = d), A=M, ntrunc = (d-1), fam, par, par2)[,d]
+  con_prob = RVinePCond(udat = matrix(uvec[,perm], ncol = d), 
+                        A=M, ntrunc = (d-1), fam, par, par2)[,d]
+  ## get conditional distribution from CopReg package
   return(joint_x + log(1 - con_prob)) ## at lof scale
 }
 
@@ -217,8 +219,7 @@ joint_den_x = function(x, RVM, skt.par, set, set_margin){
 ## This function get the conditional density f(x)*if{gest(x)>=thred}
 ## Inputs: x: vector of matrix of quantiles
 ##         thred: threshold of L
-##         RVM: An RVineMatrix() object of (X,L) including the 
-##              structure and the pair-copula families and parameters
+##         RVM: Object of class "CopReg"
 ##         RVM_X: An RVineMatrix() object of X including the structure 
 ##              and the pair-copula families and parameters
 ##         skt.par: fitted parameters of skew-t marginals of X
