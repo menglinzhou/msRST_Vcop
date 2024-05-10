@@ -17,6 +17,81 @@ thred = 0.03 ## threshold at which to estimate the stress scenario
 ####################################################################
 
 
+#### Compute true value ############################################
+
+##############################################################
+## This function provides joint density of X
+## Inputs: x: vector of quantiles
+##         RVM: An RVineMatrix() object of X including the 
+##              structure and the pair-copula families and 
+##              parameters
+##         skt.par: parameters of skew-t marginals of X
+##############################################################
+joint_den_x <- function(x, RVM, skt.par = NULL){
+  ### get the joint density f(x,l)
+  d = length(RVM$names)
+  x = matrix(x, ncol = d)
+  uvec = dmargin = x
+  for(i in 1:d){
+    uvec[,i] = pstjf(x[,i], param = skt.par[i,])
+    dmargin[,i] = dstjf((x[,i] - skt.par[i,1])/skt.par[i,2],
+                        a = skt.par[i,3],b = skt.par[i,4])/skt.par[i,2]}
+  prod_margin = apply(dmargin, MARGIN = 1, FUN = prod)
+  re = RVinePDF(uvec, RVM)*prod_margin
+  return(re)
+}
+
+##############################################################
+## This function provides conditional density of X given L>=l
+## Inputs: x: vector of quantiles
+##         thred: threshold l
+##         RVM: An RVineMatrix() object of X including the 
+##              structure and the pair-copula families and 
+##              parameters
+##         weight: weight vector to determine L
+##         skt.par: parameters of skew-t marginals of X
+##############################################################
+true_con_den <- function(x, thred, RVM, skt.par = NULL, 
+                         weight){
+  if(sum(weight*x) < thred) f = 0
+  if(sum(weight*x) >= thred) {
+    f = joint_den_x(x, RVM, skt.par)
+  }
+  return(f)
+}
+
+##############################################################
+## This function computes the true value of m(l)
+## Inputs: thred: threshold l
+##         RVM: An RVineMatrix() object of X including the 
+##              structure and the pair-copula families and 
+##              parameters
+##         w: weight vector to determine L
+##         skt.par: parameters of skew-t marginals of X
+##############################################################
+get_true <- function(thred, RVM, skt.par = NULL, w){
+  
+  fun = function(y) -log(true_con_den(y, thred, RVM, 
+                                       skt.par,w))
+  
+  set.seed(100)
+  argmax_p = DEoptim(fun, lower = 10*apply(ACMIPO_scale[,-1], 
+                                            MARGIN = 2, 
+                                            FUN = min),
+                      upper = 10*apply(ACMIPO_scale[,-1], 
+                                       MARGIN = 2, FUN = max),
+                      control = DEoptim.control(trace = F, 
+                                                itermax = 500))$optim$bestmem
+  
+  return(c(argmax_p))
+}
+
+
+truevalue = get_true(thred = thred, RVM = RVM_A,
+                     skt.par = A_skt[-1,], w = weight)
+
+####################################################################
+
 #### Data generation ###############################################
 
 ##############################################################
@@ -27,7 +102,8 @@ thred = 0.03 ## threshold at which to estimate the stress scenario
 ##         w: weight vector to determine L
 ##         seed: seed of the random generation
 ################################################################
-generate_data <- function(RVM, skt_result = NULL, w, seed = 2022){
+generate_data <- function(RVM, skt_result = NULL, w, 
+                          seed = 2022){
   set.seed(seed)
   simudata = RVineSim(3000, RVM)
   colnames(simudata) = RVM$names
