@@ -28,7 +28,7 @@ library(CopReg)
 ##                     in set
 ##         PnL_margin: fitted parameters of the marginal for L
 ################################################################
-con_den <- function(xvec, RVM, Up=NULL, p=NULL, skt_result, 
+con_den = function(xvec, RVM, Up=NULL, p=NULL, skt_result, 
                     set, set_margin, PnL_margin){
   d = length(RVM$names)
   
@@ -93,7 +93,7 @@ con_den <- function(xvec, RVM, Up=NULL, p=NULL, skt_result,
 ##              using semi-parametric method
 ##         PnL_margin: fitted parameters of the marginal for L
 ################################################################
-con_den_gt <- function(xvec, RVM_X, RVM_all, p=NULL, Up=NULL, 
+con_den_gt = function(xvec, RVM_X, RVM_all, p=NULL, Up=NULL, 
                        skt_result, set, set_margin, PnL_margin){
   d = length(RVM_all$names)
   xvec = matrix(xvec, ncol = (d-1))
@@ -229,7 +229,7 @@ joint_den_x = function(x, RVM, skt.par, set, set_margin){
 ##                     in set
 ##         PnL_margin: fitted parameters of the marginal for L
 ################################################################
-con_den_g_est <- function(x, thred, RVM, RVM_X, skt.par, 
+con_den_g_est = function(x, thred, RVM, RVM_X, skt.par, 
                           set, set_margin, PnL_margin){
   if(is.numeric(PnL_margin))
     L_qfunc = function(u){
@@ -281,7 +281,7 @@ con_den_g_est <- function(x, thred, RVM, RVM_X, skt.par,
 ##                     in set
 ##         weight: weight vector in function g
 ################################################################
-con_den_known <- function(x, thred, RVM, skt.par = NULL, set, 
+con_den_known = function(x, thred, RVM, skt.par = NULL, set, 
                           set_margin, weight){
   if(sum(weight*x) < thred) f = 0
   if(sum(weight*x) >= thred) {
@@ -312,7 +312,7 @@ con_den_known <- function(x, thred, RVM, skt.par = NULL, set,
 ##         thred: threshold used to estimate GPD dist
 ##         sigma: value of parameter sigma in GPD dist
 ##############################################################
-fitxi <- function(x, thred, sigma){
+fitxi = function(x, thred, sigma){
   xsub = x[x > thred]
   z = (xsub - thred)/sigma
   llk = function(par){
@@ -328,7 +328,7 @@ fitxi <- function(x, thred, sigma){
 ## This function estimate KDE for central data
 ## Inputs: data: vector of data
 ##############################################################
-fit_kde <- function(data){
+fit_kde = function(data){
   h = bw.nrd0(data)
   dfun = function(x){
     f = x
@@ -367,7 +367,7 @@ fit_kde <- function(data){
 ##         ur: lower threshold to estimate GPD
 ##         con: add constraint to remove jump point or not
 ##############################################################
-fitmix <- function(data, method, ul = NULL, ur = NULL, con = TRUE){
+fitmix = function(data, method, ul = NULL, ur = NULL, con = TRUE){
   if(is.null(ul)) ul = quantile(data,0.1)
   if(is.null(ur)) ur = quantile(data,0.9)
   
@@ -436,7 +436,7 @@ fitmix <- function(data, method, ul = NULL, ur = NULL, con = TRUE){
 ##         qfun: quantile function for central part data
 ##         skt.par: fitted skew-t parameters for central part data
 ##############################################################
-dmargin <- function(x, method, ul, sigmal, xil, ur, sigmar, xir, 
+dmargin = function(x, method, ul, sigmal, xil, ur, sigmar, xir, 
                     dfun = NULL, pfun = NULL, skt.par = NULL){
   if(method == "edfun") {
     f = dfun(x)
@@ -449,20 +449,20 @@ dmargin <- function(x, method, ul, sigmal, xil, ur, sigmar, xir,
   }
   
   ## right tail
-  ind <- which(x > ur)  
-  y <- 1 + xir*(x[ind] - ur)/sigmar
-  f[ind] <- (1-phi[2])/sigmar*y^(-1/xir - 1)
+  ind = which(x > ur)  
+  y = 1 + xir*(x[ind] - ur)/sigmar
+  f[ind] = (1-phi[2])/sigmar*y^(-1/xir - 1)
   
   ## left tail
-  ind <- which(x < ul)
-  y <- (1 + xil*(-x[ind] + ul)/sigmal)
-  f[ind] <- phi[1]/sigmal*y^(-1/xil - 1)
+  ind = which(x < ul)
+  y = (1 + xil*(-x[ind] + ul)/sigmal)
+  f[ind] = phi[1]/sigmal*y^(-1/xil - 1)
   
   return(f)
 }
 
 
-pmargin <- function(x, method, ul, sigmal, xil, ur, sigmar, xir, 
+pmargin = function(x, method, ul, sigmal, xil, ur, sigmar, xir, 
                     pfun = NULL, skt.par = NULL){
   if(method == "edfun") {
     Fx = pfun(x)
@@ -473,24 +473,24 @@ pmargin <- function(x, method, ul, sigmal, xil, ur, sigmar, xir,
     phi = pstjf(x = c(ul,ur), param = skt.par)
   }
   
-  ind <- which(x > ur)
-  y <- (1 + xir*(x[ind] - ur)/sigmar)
+  ind = which(x > ur)
+  y = (1 + xir*(x[ind] - ur)/sigmar)
   y = pmax(y,0)
-  Fx[ind] <- 1 - (1-phi[2])*y^(-1/xir)
+  Fx[ind] = 1 - (1-phi[2])*y^(-1/xir)
   
-  ind <- which(x < ul)
-  y <- (1 + xil*(-x[ind] + ul)/sigmal)
+  ind = which(x < ul)
+  y = (1 + xil*(-x[ind] + ul)/sigmal)
   y = pmax(y,0)
-  Fx[ind] <- phi[1]*y^(-1/xil)
+  Fx[ind] = phi[1]*y^(-1/xil)
   
   return(Fx)
 }
 
 
-qmargin <- function(u, method, ul, sigmal, xil, ur, sigmar, xir, 
+qmargin = function(u, method, ul, sigmal, xil, ur, sigmar, xir, 
                     qfun = NULL, pfun = NULL, skt.par = NULL){
   if(method == "edfun"){
-    X <- qfun(u)
+    X = qfun(u)
     phi = pfun(c(ul,ur))
   }
   if(method == "skt"){
@@ -498,14 +498,14 @@ qmargin <- function(u, method, ul, sigmal, xil, ur, sigmar, xir,
     phi = pstjf(x = c(ul,ur), param = skt.par)
   }
   
-  ind <- which(u > phi[2])  
-  y <- (1-u[ind])/(1-phi[2])
-  X[ind] <- (y^(-xir) - 1)/xir*sigmar + ur
+  ind = which(u > phi[2])  
+  y = (1-u[ind])/(1-phi[2])
+  X[ind] = (y^(-xir) - 1)/xir*sigmar + ur
   
   ## left tail
-  ind <- which(u < phi[1])  
-  y <- u[ind]/phi[1]
-  X[ind] <- -((y^(-xil) - 1)/xil*sigmal - ul)
+  ind = which(u < phi[1])  
+  y = u[ind]/phi[1]
+  X[ind] = -((y^(-xil) - 1)/xil*sigmal - ul)
   
   return(X)
 }

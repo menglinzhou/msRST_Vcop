@@ -27,7 +27,7 @@ thred = 0.03 ## threshold at which to estimate the stress scenario
 ##              parameters
 ##         skt.par: parameters of skew-t marginals of X
 ##############################################################
-joint_den_x <- function(x, RVM, skt.par = NULL){
+joint_den_x = function(x, RVM, skt.par = NULL){
   ### get the joint density f(x,l)
   d = length(RVM$names)
   x = matrix(x, ncol = d)
@@ -51,7 +51,7 @@ joint_den_x <- function(x, RVM, skt.par = NULL){
 ##         weight: weight vector to determine L
 ##         skt.par: parameters of skew-t marginals of X
 ##############################################################
-true_con_den <- function(x, thred, RVM, skt.par = NULL, 
+true_con_den = function(x, thred, RVM, skt.par = NULL, 
                          weight){
   if(sum(weight*x) < thred) f = 0
   if(sum(weight*x) >= thred) {
@@ -69,7 +69,7 @@ true_con_den <- function(x, thred, RVM, skt.par = NULL,
 ##         w: weight vector to determine L
 ##         skt.par: parameters of skew-t marginals of X
 ##############################################################
-get_true <- function(thred, RVM, skt.par = NULL, w){
+get_true = function(thred, RVM, skt.par = NULL, w){
   
   fun = function(y) -log(true_con_den(y, thred, RVM, 
                                        skt.par,w))
@@ -102,7 +102,7 @@ truevalue = get_true(thred = thred, RVM = RVM_A,
 ##         w: weight vector to determine L
 ##         seed: seed of the random generation
 ################################################################
-generate_data <- function(RVM, skt_result = NULL, w, 
+generate_data = function(RVM, skt_result = NULL, w, 
                           seed = 2022){
   set.seed(seed)
   simudata = RVineSim(3000, RVM)
