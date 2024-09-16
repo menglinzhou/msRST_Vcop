@@ -178,6 +178,8 @@ udata = data.frame(udata[,-1], L = udata$L)
 
 VA = getVinearray(vWcor(as.matrix(udata)), n = nrow(udata), 
                   method = "MSTleaf", cfi_bd = 1.01)
+RVM_fit = RVineCopSelect(udata, familyset = c(0,1,2,3,4,5,6,7,8,10), 
+                         Matrix = VA$vine_array, cores = cores)
 RVM_reg = CopReg(data = udata, vine_array = VA$vine_array, 
                  family_set = c(1,2,3), cores = core)
 RVM_reg$family = RVM_fit$family[d:1,d:1]
