@@ -5,10 +5,10 @@ This is the repository to reproduce numerical results in the paper "Reverse stre
 
 # Overview
 
-We provide the code to reproduce the numerical results in Sections 5 of the paper.
+We provide the code to reproduce the numerical results in Section 5 of the paper.
 
 
 # Files
 
-- Functions.R: The functions used to simulation studies.
+- Functions.R: The functions used in the simulation studies.
 - Section 5.R: The main code to generate simulation results in Section 5.
